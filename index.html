@@ -4,7 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎉 祝妙粒手作开业大吉</title>
+<audio id="bgMusic" loop preload="auto">
+  <source src="Elevator-伯贤.mp3" type="audio/mpeg">
+</audio>
 <style>
+  .music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(196,167,125,0.15);
+    border: 1.5px solid var(--warm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s;
+  }
+  .music-btn:hover { transform: scale(1.1); }
+  .music-btn .bar {
+    width: 3px;
+    height: 12px;
+    background: var(--warm);
+    border-radius: 2px;
+    margin: 0 2px;
+    animation: bar-dance 0.8s ease-in-out infinite alternate;
+  }
+  .music-btn .bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
+  .music-btn .bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
+  .music-btn.paused .bar { animation-play-state: paused; }
+  @keyframes bar-dance {
+    0% { height: 6px; }
+    100% { height: 18px; }
+  }
+</style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap');
   
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -263,6 +300,12 @@
 </head>
 <body>
 
+<button class="music-btn paused" id="musicBtn" onclick="toggleMusic()" title="播放/暂停音乐">
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+</button>
+
 <div class="card">
   <div class="top-ornament">
     <div class="line"></div>
@@ -329,6 +372,31 @@
 </div>
 
 <script>
+// 音乐控制
+const bgMusic = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('musicBtn');
+
+function toggleMusic() {
+  if (bgMusic.paused) {
+    bgMusic.play().then(() => {
+      musicBtn.classList.remove('paused');
+    }).catch(e => {
+      console.log('自动播放被阻止，请点击按钮播放');
+    });
+  } else {
+    bgMusic.pause();
+    musicBtn.classList.add('paused');
+  }
+}
+
+// 页面首次交互时尝试播放
+document.addEventListener('click', function firstClick() {
+  bgMusic.play().then(() => {
+    musicBtn.classList.remove('paused');
+  }).catch(() => {});
+  document.removeEventListener('click', firstClick);
+}, { once: true });
+
 // 温柔飘落花瓣
 const petalChars = ['✿', '❀', '✾'];
 const petalColors = ['#c4a77d', '#d4b896', '#e8d4b8', '#c45c4a'];
