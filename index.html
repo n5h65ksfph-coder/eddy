@@ -588,17 +588,20 @@ var cover = document.getElementById('cover');
 var cardWrapper = document.getElementById('cardWrapper');
 var opened = false;
 
-function forcePlay() {
+// 统一播放函数：不调load()，直接play
+function playMusic() {
   bgMusic.volume = 0.6;
-  if (bgMusic.paused) {
-    bgMusic.load();
-    var p = bgMusic.play();
-    if (p && p.then) {
-      p.then(function() {
+  bgMusic.play().then(function() {
+    musicBtn.classList.remove('paused');
+  }).catch(function() {
+    // play失败，等音频加载完再试
+    bgMusic.addEventListener('canplay', function onReady() {
+      bgMusic.removeEventListener('canplay', onReady);
+      bgMusic.play().then(function() {
         musicBtn.classList.remove('paused');
       }).catch(function() {});
-    }
-  }
+    });
+  });
 }
 
 // 封面花瓣
@@ -619,12 +622,11 @@ function createCoverPetal() {
 for (var i = 0; i < 4; i++) setTimeout(createCoverPetal, i * 800);
 
 // 点击封面 → 打开贺卡 + 播放音乐
-cover.addEventListener('click', function(e) {
+cover.addEventListener('click', function() {
   if (opened) return;
   opened = true;
   cover.classList.add('opening');
-
-  forcePlay();
+  playMusic();
 
   setTimeout(function() {
     cardWrapper.classList.add('show');
@@ -635,16 +637,15 @@ cover.addEventListener('click', function(e) {
     cover.style.display = 'none';
   }, 900);
 
-  for (var i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 500);
+  for (var j = 0; j < 6; j++) setTimeout(createPetal, j * 500 + 500);
   setInterval(createPetal, 3000);
 });
 
-// 音乐按钮点击
+// 音乐按钮
 musicBtn.addEventListener('click', function(e) {
   e.stopPropagation();
-  e.preventDefault();
   if (bgMusic.paused) {
-    forcePlay();
+    playMusic();
   } else {
     bgMusic.pause();
     musicBtn.classList.add('paused');
@@ -653,7 +654,7 @@ musicBtn.addEventListener('click', function(e) {
 
 // 贺卡花瓣
 function createPetal() {
-  const p = document.createElement('div');
+  var p = document.createElement('div');
   p.className = 'petal';
   p.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
   p.style.left = Math.random() * 100 + 'vw';
@@ -662,7 +663,7 @@ function createPetal() {
   p.style.animationDelay = Math.random() * 3 + 's';
   p.style.fontSize = (10 + Math.random() * 6) + 'px';
   document.body.appendChild(p);
-  setTimeout(() => p.remove(), 20000);
+  setTimeout(function() { p.remove(); }, 20000);
 }
 </script>
 
