@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎉 祝妙粒手作开业大吉</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --ink: #2c2420;
+    --ink-light: #7a6e62;
+    --paper: #fdfbf7;
+    --warm: #c4a77d;
+    --warm-light: #e8ddd0;
+    --red: #c45c4a;
+  }
+  
+  html, body {
+    height: 100%;
+    background: var(--paper);
+    font-family: 'Noto Serif SC', serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* 信纸纹理 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(196,167,125,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(196,92,74,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .card {
+    max-width: 520px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* 顶部装饰 */
+  .top-ornament {
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeInDown 1s ease-out 0.2s forwards;
+  }
+  .top-ornament .line {
+    width: 60px;
+    height: 1px;
+    background: var(--warm);
+    margin: 0 auto 16px;
+    opacity: 0.5;
+  }
+  .top-ornament .label {
+    font-size: 0.7rem;
+    color: var(--warm);
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 主标题 */
+  .main-title {
+    text-align: center;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+  }
+
+  .congrats {
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    color: var(--ink-light);
+    letter-spacing: 0.4em;
+    margin-bottom: 12px;
+  }
+
+  .shop-name {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(2.5rem, 9vw, 3.8rem);
+    letter-spacing: 0.12em;
+    color: var(--ink);
+    position: relative;
+    display: inline-block;
+  }
+  .shop-name::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 15%;
+    width: 70%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--warm), transparent);
+    opacity: 0;
+    animation: drawLine 1.2s ease-out 1.2s forwards;
+  }
+  @keyframes drawLine {
+    to { opacity: 0.6; }
+  }
+
+  /* 祝贺语 */
+  .blessing {
+    text-align: center;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.8s forwards;
+  }
+
+  .blessing-main {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    color: var(--red);
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+    text-shadow: 0 0 40px rgba(196, 92, 74, 0.15);
+  }
+
+  .blessing-emoji {
+    font-size: 1.2rem;
+    color: var(--warm);
+    letter-spacing: 0.4em;
+  }
+
+  /* 手写祝福信 */
+  .letter {
+    background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(248,244,238,0.6));
+    border: 1px solid var(--warm-light);
+    border-radius: 4px;
+    padding: 32px 28px;
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 1s forwards;
+  }
+  .letter::before {
+    content: '"';
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    font-size: 3rem;
+    color: var(--warm);
+    opacity: 0.3;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  .letter p {
+    font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+    line-height: 2.4;
+    color: var(--ink-light);
+    text-indent: 2em;
+    letter-spacing: 0.05em;
+  }
+  .letter p:last-child {
+    text-indent: 0;
+    margin-top: 16px;
+    text-align: right;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* 小狗装饰 */
+  .mascot {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 1.3s forwards;
+  }
+
+  /* 装饰分隔 */
+  .sep {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 1.5s forwards;
+  }
+  .sep-line {
+    width: 40px;
+    height: 1px;
+    background: var(--warm-light);
+  }
+  .sep-dot {
+    width: 5px;
+    height: 5px;
+    border: 1px solid var(--warm);
+    border-radius: 50%;
+  }
+
+  /* 底部祝福语 */
+  .wishes {
+    text-align: center;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 1.7s forwards;
+  }
+  .wish-item {
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    color: var(--ink-light);
+    letter-spacing: 0.15em;
+    line-height: 2.4;
+  }
+  .wish-item .gold {
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  /* 飘落花瓣 */
+  .petal {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 5;
+    animation: petalFall linear forwards;
+  }
+  @keyframes petalFall {
+    0% {
+      transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.8);
+      opacity: 0;
+    }
+    10% { opacity: 0.5; }
+    50% { transform: translateY(50vh) translateX(30px) rotate(180deg) scale(1); }
+    90% { opacity: 0.3; }
+    100% {
+      transform: translateY(105vh) translateX(-20px) rotate(360deg) scale(0.6);
+      opacity: 0;
+    }
+  }
+
+  /* 底部署名 */
+  .card-footer {
+    position: absolute;
+    bottom: 28px;
+    font-size: 0.6rem;
+    color: var(--warm);
+    letter-spacing: 0.3em;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 2s forwards;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="top-ornament">
+    <div class="line"></div>
+    <div class="label">Grand Opening</div>
+  </div>
+
+  <div class="main-title">
+    <div class="congrats">✦ 热烈祝贺 ✦</div>
+    <div class="shop-name">妙粒手作</div>
+  </div>
+
+  <div class="blessing">
+    <div class="blessing-main">开业大吉</div>
+    <div class="blessing-emoji">🎊 🎊 🎊</div>
+  </div>
+
+  <div class="letter">
+    <p>恭喜妙粒手作今日盛大开业！每一件手作都倾注了心血与热爱，这份坚持本身就是最珍贵的手艺。</p>
+    <p>愿新店生意兴隆、客似云来，愿每一位走进店里的朋友，都能感受到那份独特的温暖与美好。</p>
+    <p>—— 风哥&月月 真诚祝贺</p>
+  </div>
+
+  <!-- 简约手绘小狗 -->
+  <div class="mascot">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <g stroke="#3d3229" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M58 68 Q42 46 32 72 Q28 94 44 98" />
+        <path d="M142 68 Q158 46 168 72 Q172 94 156 98" />
+        <ellipse cx="100" cy="92" rx="44" ry="38" />
+        <circle cx="82" cy="86" r="4" fill="#3d3229" stroke="none" />
+        <circle cx="118" cy="86" r="4" fill="#3d3229" stroke="none" />
+        <circle cx="83" cy="85" r="1.2" fill="#fff" stroke="none" />
+        <circle cx="119" cy="85" r="1.2" fill="#fff" stroke="none" />
+        <ellipse cx="100" cy="100" rx="6" ry="4" fill="#3d3229" stroke="none" />
+        <path d="M94 112 Q100 118 106 112" />
+        <path d="M70 126 Q60 158 66 174 Q72 184 88 178" />
+        <path d="M130 126 Q140 158 134 174 Q128 184 112 178" />
+        <ellipse cx="88" cy="174" rx="12" ry="8" />
+        <ellipse cx="112" cy="174" rx="12" ry="8" />
+        <path d="M76 124 Q100 134 124 124" stroke="#c4a77d" stroke-width="3" />
+        <circle cx="100" cy="138" r="5" fill="#c4a77d" stroke="none" />
+      </g>
+      <ellipse cx="68" cy="100" rx="8" ry="5" fill="#c4a77d" opacity="0.25" />
+      <ellipse cx="132" cy="100" rx="8" ry="5" fill="#c4a77d" opacity="0.25" />
+      <!-- 小狗举着贺卡 -->
+      <rect x="140" y="130" width="30" height="22" rx="2" stroke="#c4a77d" stroke-width="1.5" fill="none" transform="rotate(-5, 155, 141)"/>
+      <text x="155" y="145" font-size="7" fill="#c45c4a" text-anchor="middle" transform="rotate(-5, 155, 141)" font-family="serif">恭喜</text>
+    </svg>
+  </div>
+
+  <div class="sep">
+    <div class="sep-line"></div>
+    <div class="sep-dot"></div>
+    <div class="sep-line"></div>
+  </div>
+
+  <div class="wishes">
+    <div class="wish-item"><span class="gold">生意兴隆</span> · 财源广进</div>
+    <div class="wish-item"><span class="gold">万事胜意</span> · 前程似锦</div>
+    <div class="wish-item"><span class="gold">客似云来</span> · 日进斗金</div>
+  </div>
+
+  <div class="card-footer">✦ 妙粒手作 · 开业快乐 ✦</div>
+</div>
+
+<script>
+// 温柔飘落花瓣
+const petalChars = ['✿', '❀', '✾'];
+const petalColors = ['#c4a77d', '#d4b896', '#e8d4b8', '#c45c4a'];
+
+function createPetal() {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  p.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+  p.style.animationDuration = (10 + Math.random() * 8) + 's';
+  p.style.animationDelay = Math.random() * 3 + 's';
+  p.style.fontSize = (10 + Math.random() * 6) + 'px';
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 20000);
+}
+
+for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 1500);
+setInterval(createPetal, 3000);
+</script>
+
+</body>
+</html>
