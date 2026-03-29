@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎉 祝妙粒手作开业大吉</title>
-<audio id="bgMusic" loop preload="auto">
-  <source src="bgm-short.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgMusic" loop preload="auto" src="bgm-short.mp3"></audio>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Long+Cang&display=swap');
   
@@ -587,22 +585,65 @@ var musicBtn = document.getElementById('musicBtn');
 var cover = document.getElementById('cover');
 var cardWrapper = document.getElementById('cardWrapper');
 var opened = false;
+var musicReady = false;
 
-// 统一播放函数：不调load()，直接play
+// 微信环境检测
+function isWechat() {
+  return /MicroMessenger/i.test(navigator.userAgent);
+}
+
+// 微信音频解锁
+function unlockWechatAudio() {
+  if (!isWechat()) return;
+  if (window.WeixinJSBridge) {
+    window.WeixinJSBridge.invoke('getNetworkType', {}, function() {
+      bgMusic.play().catch(function() {});
+    });
+  } else {
+    document.addEventListener('WeixinJSBridgeReady', function() {
+      window.WeixinJSBridge.invoke('getNetworkType', {}, function() {
+        bgMusic.play().catch(function() {});
+      });
+    });
+  }
+}
+
+// 统一播放函数：带重试
 function playMusic() {
   bgMusic.volume = 0.6;
-  bgMusic.play().then(function() {
-    musicBtn.classList.remove('paused');
-  }).catch(function() {
-    // play失败，等音频加载完再试
-    bgMusic.addEventListener('canplay', function onReady() {
-      bgMusic.removeEventListener('canplay', onReady);
-      bgMusic.play().then(function() {
+  var attempts = 0;
+  var maxAttempts = 3;
+
+  function tryPlay() {
+    if (attempts >= maxAttempts) return;
+    attempts++;
+    var p = bgMusic.play();
+    if (p && p.then) {
+      p.then(function() {
+        musicReady = true;
         musicBtn.classList.remove('paused');
-      }).catch(function() {});
+      }).catch(function() {
+        if (attempts < maxAttempts) {
+          setTimeout(tryPlay, 300);
+        }
+      });
+    }
+  }
+
+  // 如果音频还没加载，先设src强制重新加载
+  if (bgMusic.readyState === 0) {
+    bgMusic.src = 'bgm-short.mp3';
+    bgMusic.addEventListener('canplaythrough', function onReady() {
+      bgMusic.removeEventListener('canplaythrough', onReady);
+      tryPlay();
     });
-  });
+  } else {
+    tryPlay();
+  }
 }
+
+// 页面加载时预解锁微信音频
+unlockWechatAudio();
 
 // 封面花瓣
 var petalChars = ['✿', '❀', '✾'];
