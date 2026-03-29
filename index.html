@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎉 祝妙粒手作开业大吉</title>
-<audio id="bgMusic" loop preload="auto" autoplay>
+<audio id="bgMusic" loop preload="auto">
   <source src="Elevator-伯贤.mp3" type="audio/mpeg">
 </audio>
 <style>
@@ -507,7 +507,7 @@
 </div>
 
 <!-- ============ 音乐按钮 ============ -->
-<button class="music-btn paused" id="musicBtn" onclick="toggleMusic()" title="播放/暂停音乐">
+<button class="music-btn paused" id="musicBtn" title="播放/暂停音乐">
   <div class="bar"></div>
   <div class="bar"></div>
   <div class="bar"></div>
@@ -587,29 +587,19 @@ var musicBtn = document.getElementById('musicBtn');
 var cover = document.getElementById('cover');
 var cardWrapper = document.getElementById('cardWrapper');
 var opened = false;
-var musicReady = false;
 
-// ===== 微信音频兼容终极方案 =====
-function tryPlay() {
+function forcePlay() {
   bgMusic.volume = 0.6;
-  bgMusic.play().then(function() {
-    musicReady = true;
-    musicBtn.classList.remove('paused');
-  }).catch(function() {});
+  if (bgMusic.paused) {
+    bgMusic.load();
+    var p = bgMusic.play();
+    if (p && p.then) {
+      p.then(function() {
+        musicBtn.classList.remove('paused');
+      }).catch(function() {});
+    }
+  }
 }
-
-// 微信 WeixinJSBridge 就绪时播放
-if (typeof WeixinJSBridge !== 'undefined') {
-  WeixinJSBridge.invoke('getNetworkType', {}, tryPlay);
-} else {
-  document.addEventListener('WeixinJSBridgeReady', function() {
-    WeixinJSBridge.invoke('getNetworkType', {}, tryPlay);
-  });
-}
-
-// 任何触摸/点击都尝试播放（iOS Safari兜底）
-document.addEventListener('touchstart', tryPlay, { once: true });
-document.addEventListener('click', tryPlay, { once: true });
 
 // 封面花瓣
 var petalChars = ['✿', '❀', '✾'];
@@ -628,44 +618,33 @@ function createCoverPetal() {
 }
 for (var i = 0; i < 4; i++) setTimeout(createCoverPetal, i * 800);
 
-// 点击封面 → 打开贺卡
-cover.addEventListener('click', function() {
+// 点击封面 → 打开贺卡 + 播放音乐
+cover.addEventListener('click', function(e) {
   if (opened) return;
   opened = true;
   cover.classList.add('opening');
 
-  // 再尝试播放一次
-  tryPlay();
+  forcePlay();
 
-  // 显示贺卡
   setTimeout(function() {
     cardWrapper.classList.add('show');
     musicBtn.classList.add('show');
   }, 400);
 
-  // 移除封面
   setTimeout(function() {
     cover.style.display = 'none';
   }, 900);
 
-  // 开始花瓣飘落
   for (var i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 500);
   setInterval(createPetal, 3000);
 });
 
-// 音乐按钮
+// 音乐按钮点击
 musicBtn.addEventListener('click', function(e) {
   e.stopPropagation();
+  e.preventDefault();
   if (bgMusic.paused) {
-    bgMusic.play().then(function() {
-      musicBtn.classList.remove('paused');
-    }).catch(function() {
-      setTimeout(function() {
-        bgMusic.play().then(function() {
-          musicBtn.classList.remove('paused');
-        });
-      }, 200);
-    });
+    forcePlay();
   } else {
     bgMusic.pause();
     musicBtn.classList.add('paused');
