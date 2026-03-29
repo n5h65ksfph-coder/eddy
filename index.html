@@ -8,41 +8,7 @@
   <source src="Elevator-伯贤.mp3" type="audio/mpeg">
 </audio>
 <style>
-  .music-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 999;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(196,167,125,0.15);
-    border: 1.5px solid var(--warm);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-    transition: transform 0.3s;
-  }
-  .music-btn:hover { transform: scale(1.1); }
-  .music-btn .bar {
-    width: 3px;
-    height: 12px;
-    background: var(--warm);
-    border-radius: 2px;
-    margin: 0 2px;
-    animation: bar-dance 0.8s ease-in-out infinite alternate;
-  }
-  .music-btn .bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
-  .music-btn .bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
-  .music-btn.paused .bar { animation-play-state: paused; }
-  @keyframes bar-dance {
-    0% { height: 6px; }
-    100% { height: 18px; }
-  }
-</style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Long+Cang&display=swap');
   
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
@@ -63,18 +29,221 @@
     overflow-x: hidden;
   }
 
-  /* 信纸纹理 */
-  body::before {
-    content: '';
+  /* ============ 封面 ============ */
+  .cover {
     position: fixed;
     inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 50%, rgba(196,167,125,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 30%, rgba(196,92,74,0.04) 0%, transparent 50%);
+    z-index: 1000;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    overflow: visible;
+  }
+  .cover.opening {
+    opacity: 0;
+    transform: scale(1.05);
     pointer-events: none;
-    z-index: 0;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 40%, rgba(196,167,125,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(196,92,74,0.05) 0%, transparent 50%);
+    pointer-events: none;
   }
 
+  .cover-envelope {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    margin-bottom: 48px;
+  }
+  /* 信封底部 - 圆润可爱风 */
+  .cover-envelope .env-body {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    border: 2.5px solid var(--warm);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fef6ee, #fceade);
+    overflow: hidden;
+  }
+  /* 信封底部装饰波点 */
+  .cover-envelope .env-body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle, rgba(196,167,125,0.08) 4px, transparent 4px);
+    background-size: 24px 24px;
+    border-radius: 14px;
+  }
+  /* 信封翻盖 - 圆润三角形 */
+  .cover-envelope .env-flap {
+    position: absolute;
+    top: 0;
+    left: -2px;
+    right: -2px;
+    height: 100px;
+    border-radius: 0;
+    background: linear-gradient(180deg, #f5dcc5, #fceade);
+    border: none;
+    border-bottom: none;
+    transform-origin: top center;
+    transition: transform 0.6s ease;
+    z-index: 2;
+    clip-path: polygon(0 100%, 50% 30%, 100% 100%);
+  }
+  .cover:hover .env-flap {
+    transform: rotateX(-25deg);
+  }
+  .cover.opening .env-flap {
+    transform: rotateX(-180deg);
+  }
+  /* 信纸从信封里探出 */
+  .cover-envelope .env-letter {
+    position: absolute;
+    bottom: 12px;
+    left: 25px;
+    right: 25px;
+    height: 108px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1.5px dashed var(--warm-light);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: transform 0.6s ease 0.2s;
+  }
+  .cover.opening .env-letter {
+    transform: translateY(-65px);
+  }
+  .env-letter span {
+    font-family: 'Ma Shan Zheng', 'Long Cang', cursive;
+    font-size: 1.5rem;
+    color: var(--ink);
+    letter-spacing: 0.5em;
+    text-indent: 0.5em;
+  }
+
+  .cover-title {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(1.8rem, 7vw, 2.8rem);
+    color: var(--ink);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    line-height: 1.4;
+    position: relative;
+    white-space: nowrap;
+  }
+  .cover-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 2px;
+    background: var(--warm);
+    margin: 12px auto 0;
+    opacity: 0.5;
+  }
+
+  .cover-hint {
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    letter-spacing: 0.15em;
+    animation: hintBreath 2.5s ease-in-out infinite;
+    margin-top: 8px;
+  }
+  @keyframes hintBreath {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .cover-sender {
+    position: absolute;
+    bottom: 40px;
+    font-size: 0.75rem;
+    color: var(--warm);
+    letter-spacing: 0.15em;
+    opacity: 0.7;
+  }
+
+  /* 封面装饰花瓣 */
+  .cover .petal {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 0;
+    animation: petalFall linear forwards;
+  }
+
+  /* 封蜡印章 */
+  .cover-envelope .env-seal {
+    position: absolute;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    z-index: 3;
+    animation: sealPulse 3s ease-in-out infinite;
+  }
+  @keyframes sealPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.08); }
+  }
+  .cover.opening .env-seal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ============ 音乐按钮 ============ */
+  .music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(196,167,125,0.15);
+    border: 1.5px solid var(--warm);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s;
+  }
+  .music-btn.show { display: flex; }
+  .music-btn:hover { transform: scale(1.1); }
+  .music-btn .bar {
+    width: 3px;
+    height: 12px;
+    background: var(--warm);
+    border-radius: 2px;
+    margin: 0 2px;
+    animation: bar-dance 0.8s ease-in-out infinite alternate;
+  }
+  .music-btn .bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
+  .music-btn .bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
+  .music-btn.paused .bar { animation-play-state: paused; }
+  @keyframes bar-dance {
+    0% { height: 6px; }
+    100% { height: 18px; }
+  }
+
+  /* ============ 贺卡主体 ============ */
   .card {
     max-width: 520px;
     margin: 0 auto;
@@ -86,6 +255,18 @@
     padding: 60px 40px;
     position: relative;
     z-index: 10;
+  }
+
+  /* 信纸纹理 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(196,167,125,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(196,92,74,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* 顶部装饰 */
@@ -191,7 +372,7 @@
     animation: fadeInUp 1s ease-out 1s forwards;
   }
   .letter::before {
-    content: '"';
+    content: '\201C';
     position: absolute;
     top: -8px;
     left: 20px;
@@ -296,16 +477,44 @@
     opacity: 0;
     animation: fadeInUp 0.8s ease-out 2s forwards;
   }
+
+  /* 禁止贺卡内容滚动直到封面打开 */
+  .card-wrapper {
+    display: none;
+  }
+  .card-wrapper.show {
+    display: block;
+  }
 </style>
 </head>
 <body>
 
+<!-- ============ 封面 ============ -->
+<div class="cover" id="cover">
+  <div class="cover-envelope">
+    <div class="env-flap"></div>
+    <div class="env-body"></div>
+    <div class="env-letter"><span>妙妙亲启</span></div>
+    <svg class="env-seal" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="18" fill="#c45c4a" opacity="0.85"/>
+      <circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="0.8" opacity="0.4"/>
+      <path d="M20 12 C16 12 13 15 13 18 C13 24 20 30 20 30 C20 30 27 24 27 18 C27 15 24 12 20 12Z" fill="#fff" opacity="0.9"/>
+    </svg>
+  </div>
+  <div class="cover-title">AI泥制作</div>
+  <div class="cover-hint">轻轻点击，打开信封 💌</div>
+  <div class="cover-sender">风哥 & 月月 赠</div>
+</div>
+
+<!-- ============ 音乐按钮 ============ -->
 <button class="music-btn paused" id="musicBtn" onclick="toggleMusic()" title="播放/暂停音乐">
   <div class="bar"></div>
   <div class="bar"></div>
   <div class="bar"></div>
 </button>
 
+<!-- ============ 贺卡主体 ============ -->
+<div class="card-wrapper" id="cardWrapper">
 <div class="card">
   <div class="top-ornament">
     <div class="line"></div>
@@ -370,18 +579,66 @@
 
   <div class="card-footer">✦ 妙粒手作 · 开业快乐 ✦</div>
 </div>
+</div>
 
 <script>
-// 音乐控制
 const bgMusic = document.getElementById('bgMusic');
 const musicBtn = document.getElementById('musicBtn');
+const cover = document.getElementById('cover');
+const cardWrapper = document.getElementById('cardWrapper');
+let opened = false;
 
+// 封面花瓣
+const petalChars = ['✿', '❀', '✾'];
+const petalColors = ['#c4a77d', '#d4b896', '#e8d4b8', '#c45c4a'];
+function createCoverPetal() {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  p.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = '-20px';
+  p.style.color = petalColors[Math.floor(Math.random() * petalColors.length)];
+  p.style.animationDuration = (12 + Math.random() * 10) + 's';
+  p.style.fontSize = (10 + Math.random() * 8) + 'px';
+  cover.appendChild(p);
+  setTimeout(() => p.remove(), 22000);
+}
+for (let i = 0; i < 4; i++) setTimeout(createCoverPetal, i * 800);
+
+// 点击封面 → 打开贺卡 + 播放音乐
+cover.addEventListener('click', function() {
+  if (opened) return;
+  opened = true;
+
+  cover.classList.add('opening');
+
+  // 播放音乐
+  bgMusic.volume = 0.6;
+  bgMusic.play().then(() => {
+    musicBtn.classList.remove('paused');
+  }).catch(() => {});
+
+  // 显示贺卡
+  setTimeout(() => {
+    cardWrapper.classList.add('show');
+    musicBtn.classList.add('show');
+  }, 400);
+
+  // 移除封面
+  setTimeout(() => {
+    cover.style.display = 'none';
+  }, 900);
+
+  // 开始花瓣飘落
+  for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 500);
+  setInterval(createPetal, 3000);
+});
+
+// 音乐控制
 function toggleMusic() {
   if (bgMusic.paused) {
     bgMusic.play().then(() => {
       musicBtn.classList.remove('paused');
-    }).catch(e => {
-      console.log('自动播放被阻止，请点击按钮播放');
     });
   } else {
     bgMusic.pause();
@@ -389,37 +646,7 @@ function toggleMusic() {
   }
 }
 
-// 页面首次交互时尝试播放
-document.addEventListener('click', function firstClick() {
-  bgMusic.volume = 0.6;
-  bgMusic.play().then(() => {
-    musicBtn.classList.remove('paused');
-  }).catch(() => {});
-  document.removeEventListener('click', firstClick);
-}, { once: true });
-
-// 添加点击播放提示
-window.addEventListener('load', function() {
-  const hint = document.createElement('div');
-  hint.id = 'musicHint';
-  hint.textContent = '♪ 点击任意位置播放音乐';
-  hint.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(196,167,125,0.2);color:#7a6e62;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;animation:hintPulse 2s ease-in-out infinite;backdrop-filter:blur(4px);border:1px solid rgba(196,167,125,0.3);font-family:"ZCOOL XiaoWei",serif;';
-  document.body.appendChild(hint);
-  const style = document.createElement('style');
-  style.textContent = '@keyframes hintPulse{0%,100%{opacity:0.7}50%{opacity:1}}';
-  document.head.appendChild(style);
-});
-
-// 音乐开始播放后移除提示
-bgMusic.addEventListener('playing', function() {
-  const hint = document.getElementById('musicHint');
-  if (hint) hint.style.display = 'none';
-});
-
-// 温柔飘落花瓣
-const petalChars = ['✿', '❀', '✾'];
-const petalColors = ['#c4a77d', '#d4b896', '#e8d4b8', '#c45c4a'];
-
+// 贺卡花瓣
 function createPetal() {
   const p = document.createElement('div');
   p.className = 'petal';
@@ -432,9 +659,6 @@ function createPetal() {
   document.body.appendChild(p);
   setTimeout(() => p.remove(), 20000);
 }
-
-for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 1500);
-setInterval(createPetal, 3000);
 </script>
 
 </body>
