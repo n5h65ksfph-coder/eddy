@@ -391,11 +391,30 @@ function toggleMusic() {
 
 // 页面首次交互时尝试播放
 document.addEventListener('click', function firstClick() {
+  bgMusic.volume = 0.6;
   bgMusic.play().then(() => {
     musicBtn.classList.remove('paused');
   }).catch(() => {});
   document.removeEventListener('click', firstClick);
 }, { once: true });
+
+// 添加点击播放提示
+window.addEventListener('load', function() {
+  const hint = document.createElement('div');
+  hint.id = 'musicHint';
+  hint.textContent = '♪ 点击任意位置播放音乐';
+  hint.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(196,167,125,0.2);color:#7a6e62;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;animation:hintPulse 2s ease-in-out infinite;backdrop-filter:blur(4px);border:1px solid rgba(196,167,125,0.3);font-family:"ZCOOL XiaoWei",serif;';
+  document.body.appendChild(hint);
+  const style = document.createElement('style');
+  style.textContent = '@keyframes hintPulse{0%,100%{opacity:0.7}50%{opacity:1}}';
+  document.head.appendChild(style);
+});
+
+// 音乐开始播放后移除提示
+bgMusic.addEventListener('playing', function() {
+  const hint = document.getElementById('musicHint');
+  if (hint) hint.style.display = 'none';
+});
 
 // 温柔飘落花瓣
 const petalChars = ['✿', '❀', '✾'];
