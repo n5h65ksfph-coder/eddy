@@ -612,39 +612,75 @@ cover.addEventListener('click', function() {
 
   cover.classList.add('opening');
 
-  // 播放音乐
+  // 播放音乐（兼容微信/移动端浏览器）
   bgMusic.volume = 0.6;
-  bgMusic.play().then(() => {
-    musicBtn.classList.remove('paused');
-  }).catch(() => {});
+  var playPromise = bgMusic.play();
+  if (playPromise !== undefined) {
+    playPromise.then(function() {
+      musicBtn.classList.remove('paused');
+    }).catch(function() {
+      // 微信等环境需要用户再次交互才能播放
+      musicBtn.classList.add('show', 'paused');
+    });
+  }
 
   // 显示贺卡
-  setTimeout(() => {
+  setTimeout(function() {
     cardWrapper.classList.add('show');
     musicBtn.classList.add('show');
   }, 400);
 
   // 移除封面
-  setTimeout(() => {
+  setTimeout(function() {
     cover.style.display = 'none';
   }, 900);
 
   // 开始花瓣飘落
-  for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 500);
+  for (var i = 0; i < 6; i++) setTimeout(createPetal, i * 500 + 500);
   setInterval(createPetal, 3000);
 });
 
-// 音乐控制
-function toggleMusic() {
+// 微信环境下，在 document 上监听一次触摸来解锁音频
+document.addEventListener('WeixinJSBridgeReady', function() {
+  bgMusic.load();
+}, false);
+
+// 音乐控制（兼容微信）
+musicBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
   if (bgMusic.paused) {
-    bgMusic.play().then(() => {
+    bgMusic.currentTime = 0;
+    bgMusic.load();
+    bgMusic.play().then(function() {
       musicBtn.classList.remove('paused');
+    }).catch(function() {
+      // 再次尝试
+      setTimeout(function() {
+        bgMusic.play().then(function() {
+          musicBtn.classList.remove('paused');
+        });
+      }, 100);
     });
   } else {
     bgMusic.pause();
     musicBtn.classList.add('paused');
   }
-}
+});
+
+// 微信环境下，在 document 上监听一次触摸来解锁音频
+document.addEventListener('WeixinJSBridgeReady', function() {
+  bgMusic.load();
+}, false);
+
+// 全局兜底：任何点击都尝试解锁音频
+document.addEventListener('click', function onFirstClick() {
+  if (bgMusic.paused && opened) {
+    bgMusic.play().then(function() {
+      musicBtn.classList.remove('paused');
+    }).catch(function(){});
+  }
+  document.removeEventListener('click', onFirstClick);
+}, { once: true });
 
 // 贺卡花瓣
 function createPetal() {
